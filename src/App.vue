@@ -11,5 +11,5 @@ export default {
 </script>
 
 <style scoped lang="sass">
-  @import './common/scss/const.scss';
+  @import './common/scss/variable.scss';
 </style>
