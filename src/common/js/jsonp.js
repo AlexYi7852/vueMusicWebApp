@@ -1,20 +1,21 @@
-import originalJSONP from 'jsonp'
+import originJSONP from 'jsonp'
 
-function param(data) {
+function param (data) {
   let url = ''
   for (let i in data) {
-    let value = (data[i] !== undefined) ? data[i] : ''
+    let value = data[i] !== undefined ? data[i] : ''
     url += `&${i}=${encodeURIComponent(value)}`
   }
-  // 删掉第一个 &
+  // 如果有url就删除第一个&
   return url ? url.substring(1) : ''
 }
 
-export default function jsonp(url, data, opts) {
-  url += ((url.indexOf('?') === -1) ? '?' : '&') + param(data)
+export default function jspnp (url, data, option) {
+  // 如果url没有？就加一个? 否则加上&
+  url += (url.indexOf('?') < 0 ? '?' : '&') + param(url)
 
   return new Promise((resolve, reject) => {
-    originalJSONP(url, opts, (err, data) => {
+    originJSONP(url, option, (err, data) => {
       if (!err) {
         resolve(data)
       } else {
