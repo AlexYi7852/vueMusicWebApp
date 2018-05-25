@@ -2,28 +2,43 @@
 <template>
   <div class="recommend">
     <div class="recommend-content">
-      <div class="slider-wrapper">
+      <div v-if="recommend.length" class="slider-wrapper">
+        <Slider>
+          <div v-for="(item, index) in recommend" :key="index">
+            <a :href="item.linkUrl">
+              <img :src="item.picUrl">  
+            </a>  
+          </div>
+        </Slider> 
       </div>
       <div class="recommend-list">
         <h1 class="list-title">热门歌单推荐</h1>
         <ul></ul>  
       </div>  
     </div>  
-  </div>  
+  </div>
 </template>
 
 <script>
+import Slider from 'base/slider'
 import { getRecommend } from 'api/recommend'
 import { ERR_OK } from 'api/config'
 export default {
+  components: { Slider },
+  data () {
+    return {
+      recommend: []
+    }
+  },
   created () {
     this._getRecommend()
   },
   methods: {
+    // 获取轮播图数据  
     _getRecommend () {
       getRecommend().then((res) => {
         if (res.code === ERR_OK) {
-          console.log(res.data.slider)  
+          this.recommend = res.data.slider
         }  
       })  
     }  
@@ -44,7 +59,7 @@ export default {
   .recommend-content {
     height: 100%;
     overflow: hidden;
-    .slide-wrapper {
+    .slider-wrapper {
       position: relative;
       width: 100%;
       overflow: hidden;
