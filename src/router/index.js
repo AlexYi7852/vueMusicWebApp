@@ -9,8 +9,8 @@ import UserCenter from 'components/userCenter' // 个人中心
 Vue.use(Router)
 
 export default new Router({
-  routers: [
-    { path: '/', redirect: 'recommend' },
+  routes: [
+    { path: '/', redirect: '/recommend' },
     { path: '/recommend', component: Recommend },
     { path: '/ranking', component: Ranking },
     { path: '/search', component: Search },
