@@ -1,16 +1,16 @@
 <template>
   <div id="app">
     <MyHeader></MyHeader>
-    <MyTab></MyTab>
+    <TabBar></TabBar>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import MyTab from 'components/MyTab'
-import MyHeader from 'components/MyHeader'
+import TabBar from 'components/tabbar'
+import MyHeader from 'components/header'
 export default {
-  components: { MyHeader, MyTab }
+  components: { MyHeader, TabBar }
 }
 </script>
 
