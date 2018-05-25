@@ -1,15 +1,19 @@
 <template>
   <div id="app">
-    hello world
+    <MyHeader></MyHeader>
+    <MyTab></MyTab>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
+import MyTab from 'components/MyTab'
+import MyHeader from 'components/MyHeader'
 export default {
-  name: 'App'
+  components: { MyHeader, MyTab }
 }
 </script>
 
 <style scoped lang="sass">
-  @import './common/scss/const.scss';
+  @import './common/scss/variable';
 </style>
