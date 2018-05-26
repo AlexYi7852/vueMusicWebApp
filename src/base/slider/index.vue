@@ -67,16 +67,23 @@ export default {
       this.$refs.sliderGroup.style.width = width + 'px'
     },
     // 初始化slider
-    _initSlider () {  
+    _initSlider () {
       this.slider = new BScroll(this.$refs.slider, {
-        snap: true,         // 该属性是给 slider 组件使用的，普通的列表滚动不需要配置
         click: true,        // 是否允许点击
         scrollX: true,      // 是否允许横向滚动
         scrollY: false,     // 是否允许纵向滚动
-        momentum: true,     // 当快速滑动时是否开启滑动惯性
-        snapSpeed: 400,     // 轮播图切换的动画时间
-        snapThreshold: 0.3, // 用手指滑动时页面可切换的阈值，大于这个阈值可以滑动的下一页
-        snapLoop: this.loop // 是否可以无缝循环轮播
+        // 现象:
+        //     可以轮播,但不能循环(不能从第一张往前翻,不能从最后一张往后翻)
+        //     按教程里给slider-group增加了2个slider的宽度,但他们出现在轮播图片的末尾(2个空白)
+        //     第一张图没有对应dot,第二张图对应第一个dot,以此类推
+        // 0.1.15中可以正常运行,原来是better-scoll版本的问题,在新版本中,
+        // 轮播图的bs对象需要这么配置(snap写在一个对象中):
+        snap: {
+          loop: this.loop, // 是否可以无缝循环轮播
+          snapThreshold: 0.3, // 用手指滑动时页面可切换的阈值，大于这个阈值可以滑动的下一页
+          snapSpeed: 400     // 轮播图切换的动画时间
+        },         // 该属性是给 slider 组件使用的，普通的列表滚动不需要配置
+        momentum: true     // 当快速滑动时是否开启滑动惯性
       })
       // 滚动完毕的时候获取它的pageIndex
       this.slider.on('scrollEnd', () => {
@@ -86,6 +93,7 @@ export default {
         this.currentDotsIndex = dotsIndex
       })
     },
+    // 获取dots长度
     _initDots () {
       this.dots = new Array(this.children.length)  
     }
