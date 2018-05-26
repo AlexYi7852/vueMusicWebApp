@@ -46,11 +46,12 @@ export default {
       if (this.autoPlay) {
         this._initPlay();
       }
+      this._initRefresh()
     }, 20);
   },
   methods: {
     // 横向滚动需要设置slider(sliderGroup)宽度
-    _setSliderWidth() {
+    _setSliderWidth(isResize) {
       // 首先获取slider(sliderGroup)的子元素数量
       this.children = this.$refs.sliderGroup.children;
       let width = 0; // 初始化父元素宽度
@@ -64,7 +65,7 @@ export default {
         width += sliderWidth; // 累加计算出父元素的总宽度
       }
       // 如果可以无缝循环轮播，父元素的宽度要加两个子元素的宽度
-      if (this.loop) {
+      if (this.loop && !isResize) {
         width += 2 * sliderWidth;
       }
       this.$refs.sliderGroup.style.width = width + "px";
@@ -111,13 +112,23 @@ export default {
     _initPlay() {
       let pageIndex = this.currentDotsIndex;
       if (this.loop) {
-        pageIndex += 1
+        pageIndex += 1;
       }
       this.timer = setTimeout(() => {
         // 1.0版本以上用next()
         // 1.0以下用goToPage， goToPage是better-scroll内置方法
-        this.slider.next()
-      }, this.interval)
+        this.slider.next();
+      }, this.interval);
+    },
+    _initRefresh() {
+      // 当窗口尺寸改变时，重新计算轮播宽度
+      window.addEventListener("resize", () => {
+        if (!this.slider) {
+          return;
+        }
+        this._setSliderWidth(true);
+        this.slider.refresh();
+      });
     }
   }
 };
