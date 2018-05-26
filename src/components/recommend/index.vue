@@ -2,9 +2,9 @@
 <template>
   <div class="recommend">
     <div class="recommend-content">
-      <div v-if="recommend.length" class="slider-wrapper">
+      <div v-if="recommends.length" class="slider-wrapper">
         <Slider>
-          <div v-for="(item, index) in recommend" :key="index">
+          <div v-for="(item, index) in recommends" :key="index">
             <a :href="item.linkUrl">
               <img :src="item.picUrl">  
             </a>  
@@ -27,7 +27,7 @@ export default {
   components: { Slider },
   data () {
     return {
-      recommend: []
+      recommends: []
     }
   },
   created () {
@@ -38,7 +38,7 @@ export default {
     _getRecommend () {
       getRecommend().then((res) => {
         if (res.code === ERR_OK) {
-          this.recommend = res.data.slider
+          this.recommends = res.data.slider
         }  
       })  
     }  

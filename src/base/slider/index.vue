@@ -73,7 +73,6 @@ export default {
     // 初始化slider
     _initSlider() {
       this.slider = new BScroll(this.$refs.slider, {
-        click: true, // 是否允许点击
         scrollX: true, // 是否允许横向滚动
         scrollY: false, // 是否允许纵向滚动
         // 现象:
@@ -104,7 +103,6 @@ export default {
         }
       });
     },
-    // 获取dots长度
     // 老版本后dots会多两个
     _initDots() {
       this.dots = new Array(this.children.length);
@@ -130,6 +128,10 @@ export default {
         this.slider.refresh();
       });
     }
+  },
+  // 当跳转页面的时候清除定时器，有利于内存释放
+  destroyed () {
+    clearTimeout(this.timer)
   }
 };
 </script>
