@@ -42,7 +42,7 @@ import Scroll from 'base/scroll'
 import Slider from 'base/slider'
 import Loading from 'base/loading'
 import { MyRecommend } from 'api/recommend'
-import { ERR_OK } from 'api/recommend_config'
+import { ERR_OK } from 'api/config'
 export default {
   components: { Slider, Scroll, Loading },
   data () {

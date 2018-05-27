@@ -12,7 +12,7 @@ function param (data) {
 
 export default function jspnp (url, data, option) {
   // 如果url没有？就加一个? 否则加上&
-  url += (url.indexOf('?') < 0 ? '?' : '&') + param(url)
+  url += (url.indexOf('?') === -1 ? '?' : '&') + param(data)
 
   return new Promise((resolve, reject) => {
     originJSONP(url, option, (err, data) => {

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import jsonp from 'common/js/jsonp'
-import { commonParams, options } from 'api/recommend_config'
+import { commonParams, options } from 'api/config'
 
 export const MyRecommend = {
   /**
