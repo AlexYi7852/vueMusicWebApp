@@ -2,9 +2,9 @@
 <template>
   <div class="recommend">
     <div class="recommend-content">
-      <div v-if="recommends.length" class="slider-wrapper">
+      <div v-if="sliderList.length" class="slider-wrapper">
         <Slider>
-          <div v-for="(item, index) in recommends" :key="index">
+          <div v-for="(item, index) in sliderList" :key="index">
             <a :href="item.linkUrl">
               <img :src="item.picUrl">  
             </a>  
@@ -21,27 +21,39 @@
 
 <script>
 import Slider from 'base/slider'
-import { getRecommend } from 'api/recommend'
-import { ERR_OK } from 'api/config'
+import { MyRecommend } from 'api/recommend'
+import { ERR_OK } from 'api/recommend_config'
 export default {
   components: { Slider },
   data () {
     return {
-      recommends: []
+      sliderList: [], // 轮播列表
+      discList: []    // 歌单列表
     }
   },
   created () {
-    this._getRecommend()
+    this._getSliderList()
+    this._getDiscList()
   },
   methods: {
     // 获取轮播图数据  
-    _getRecommend () {
-      getRecommend().then((res) => {
+    _getSliderList () {
+      MyRecommend.getSliderList().then((res) => {
+        console.log(res)
         if (res.code === ERR_OK) {
-          this.recommends = res.data.slider
+          this.sliderList = res.data.slider
         }  
       })  
-    }  
+    },
+    // 抓取推荐页歌单列表数据
+    _getDiscList () {
+      MyRecommend.getDiscList().then((res) => {
+        if (res.code === ERR_OK) {
+          console.log(res.data.list)
+          this.discList = res.data.list
+        }
+      })
+    }
   } 
 }
 </script>
