@@ -46,7 +46,14 @@ export default {
       if (this.autoPlay) {
         this._initPlay();
       }
-      this._initRefresh()
+      // 当窗口尺寸改变时，重新计算轮播宽度
+      window.addEventListener("resize", () => {
+        if (!this.slider) {
+          return;
+        }
+        this._setSliderWidth(true);
+        this.slider.refresh();
+      });
     }, 20);
   },
   methods: {
@@ -117,16 +124,6 @@ export default {
         // 1.0以下用goToPage， goToPage是better-scroll内置方法
         this.slider.next();
       }, this.interval);
-    },
-    _initRefresh() {
-      // 当窗口尺寸改变时，重新计算轮播宽度
-      window.addEventListener("resize", () => {
-        if (!this.slider) {
-          return;
-        }
-        this._setSliderWidth(true);
-        this.slider.refresh();
-      });
     }
   },
   // 当跳转页面的时候清除定时器，有利于内存释放
