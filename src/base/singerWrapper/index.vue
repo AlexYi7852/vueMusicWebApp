@@ -23,6 +23,9 @@
         :class="{'current': currentIndex === index}" :data-index="index" class="item">{{ item }}</li>
       </ul>
     </div>
+    <div class="list-title-fixed" v-show="fixedTitle">
+      <h1 class="fixed-title">{{ fixedTitle }}</h1>
+    </div>
   </scroll>  
 </template>
 
@@ -40,6 +43,7 @@ export default {
     }
   },
   props: {
+    // 从父元素传过来的数据
     data: {
       type: Array,
       default: []
@@ -49,14 +53,20 @@ export default {
     this.touch = {},
     // 监听滚动事件
     this.listenScroll = true,
-    this.probeType = 3, // better-scroll 滚动组件 不截留
+    // better-scroll 属性probeType = 3的时候不会阻拦派发scroll
+    this.probeType = 3,
     this.listHeight = []
   },
   computed: {
+    // 字母列表
     shortcutList () {
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
+    },
+    fixedTitle () {
+      if (this.scrollY > 0) { return '' }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
   watch: {
@@ -112,15 +122,17 @@ export default {
       let targetIndex = parseInt(this.touch.firstIndex) + delta
       this._scrollTo(targetIndex)
     },
+    // 接收从scroll组建传过来的Y值
     scroll (pos) {
       this.scrollY = pos.y
     },
-    // 计算每个listGroup的高度
+    // 计算每个listGroup子元素的高度
     _calculateHeight () {
       // 遍历listGroup， 获取每个子元素的高度
       const list = this.$refs.listGroup
       let height = 0
       this.listHeight.push(height)
+      // 把每个子元素的高度添加到this.listHeight
       for (let i = 0; i < list.length; i++) {
         let item = list[i]
         height += item.clientHeight
@@ -206,7 +218,7 @@ export default {
       }
     }
   }
-  .list-fixed {
+  .list-title-fixed {
     position: absolute;
     top: -1px;
     left: 0;
@@ -216,7 +228,7 @@ export default {
       line-height: 30px;
       padding-left: 20px;
       font-size: $font-size-small;
-      color: $color-text-l;
+      color: $color-theme;
       background: $color-highlight-background;
     }
   }
