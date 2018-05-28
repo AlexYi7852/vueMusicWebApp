@@ -1,11 +1,12 @@
 
 <template>
-  <scroll ref="scroll" class="singer-wrapper" :data="data">
+  <scroll ref="scroll" class="singer-wrapper" :probeType="probeType"
+   :data="data" :listenScroll="listenScroll" @scroll="scroll">
     <!-- 左侧歌手列表 -->
     <ul>
       <!-- 点击右侧，左侧联动 -->
       <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
-        <h2 class="list-group-title" >{{ group.title }}</h2>
+        <h2 class="list-group-title" :class="{'current': currentIndex === index}">{{ group.title }}</h2>
         <ul>
           <li v-for="(item, index) in group.items" :key="index" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" />
@@ -19,7 +20,7 @@
                    @touchmove.stop.prevent="onShortcutTouchMove">
       <ul>
         <li v-for="(item, index) in shortcutList" :key="index" 
-              :data-index="index" class="item">{{ item }}</li>
+        :class="{'current': currentIndex === index}" :data-index="index" class="item">{{ item }}</li>
       </ul>
     </div>
   </scroll>  
@@ -32,6 +33,12 @@ import { MyDom } from 'common/js/dom'
 const ANCHOR_HEIGHT = 18
 export default {
   components: { Scroll, Loading },
+  data () {
+    return {
+      scrollY: -1,
+      currentIndex: 0
+    }
+  },
   props: {
     data: {
       type: Array,
@@ -39,13 +46,44 @@ export default {
     }
   },
   created () {
-    this.touch = {}
+    this.touch = {},
+    // 监听滚动事件
+    this.listenScroll = true,
+    this.probeType = 3, // better-scroll 滚动组件 不截留
+    this.listHeight = []
   },
   computed: {
     shortcutList () {
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
+    }
+  },
+  watch: {
+    // 监听data变化，计算每个listGroup的高度
+    data () {
+      setTimeout(() => {
+        this._calculateHeight()
+      }, 20)
+    },
+    // 监听 scrollY 落在listGroup哪个子元素区间，实现高亮联动
+    scrollY (newY) {
+      console.log(newY)
+      const listHeight = this.listHeight
+      // 当滚动到顶部
+      if (newY > 0) { this.currentIndex = 0; return }
+
+      // 滚动到中间部分
+      for (let i = 0; i < listHeight.length - 1; i++) {
+        let height1 = listHeight[i]
+        let height2 = listHeight[i + 1]
+        if (-newY >= height1 && -newY < height2) {
+          this.currentIndex = i
+          return
+        }
+      }
+      // 当滚动到底部， 并且-newY > 最后一个元素的上限
+      this.currentIndex = listHeight - 2
     }
   },
   methods: {
@@ -71,11 +109,36 @@ export default {
       // 两次 touch y轴偏移量
       let delta = Math.floor((this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT)
       // 移动到的元素索引
-      let targetIndex = Number(this.touch.firstIndex) + delta
+      let targetIndex = parseInt(this.touch.firstIndex) + delta
       this._scrollTo(targetIndex)
+    },
+    scroll (pos) {
+      this.scrollY = pos.y
+    },
+    // 计算每个listGroup的高度
+    _calculateHeight () {
+      // 遍历listGroup， 获取每个子元素的高度
+      const list = this.$refs.listGroup
+      let height = 0
+      this.listHeight.push(height)
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
     },
     // 点击/触摸 移动/滚动 到目标元素
     _scrollTo (index) {
+      // 如果点击到最上面或者最下面的padding位置， 直接return
+      if (!index && index !== 0) { return }
+      // 如果滑动到最上面padding位置， index = 0
+      else if (index < 0) {
+        index = 0 
+      // 滑动到最下面padding位置， index = 最后一个索引
+      } else if (index > this.listHeight.length - 2) {
+        index = this.listHeight.length - 2
+      }
+      this.scrollY = -this.listHeight[index]
       this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0)
     }
   }
@@ -101,6 +164,9 @@ export default {
       font-size: $font-size-small;
       color: $color-text-l;
       background: $color-highlight-background;
+      &.current {
+        color: $color-theme;
+      }
     }
     .list-group-item {
       display: flex;
