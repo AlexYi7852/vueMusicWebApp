@@ -3,7 +3,8 @@
   <scroll ref="scroll" class="singer-wrapper" :data="data">
     <!-- 左侧歌手列表 -->
     <ul>
-      <li class="list-group" v-for="(group, index) in data" :key="index">
+      <!-- 点击右侧，左侧联动 -->
+      <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
         <h2 class="list-group-title" >{{ group.title }}</h2>
         <ul>
           <li v-for="(item, index) in group.items" :key="index" class="list-group-item">
@@ -13,26 +14,69 @@
         </ul>
       </li>
     </ul>
+    <!-- 右侧字母列表 -->
+    <div class="list-shortcut" @touchstart="onShortcutTouchStart"
+                   @touchmove.stop.prevent="onShortcutTouchMove">
+      <ul>
+        <li v-for="(item, index) in shortcutList" :key="index" 
+              :data-index="index" class="item">{{ item }}</li>
+      </ul>
+    </div>
   </scroll>  
 </template>
 
 <script>
 import Scroll from "base/scroll"
 import Loading from 'base/loading'
+import { MyDom } from 'common/js/dom'
+const ANCHOR_HEIGHT = 18
 export default {
   components: { Scroll, Loading },
-  // data () {
-  //   return {
-  //     scrollY: -1,
-  //     currentIndex: 0,
-  //     // 标题上推y值（热门标题 - A 标题）
-  //     diff: -1
-  //   }
-  // },
   props: {
     data: {
       type: Array,
       default: []
+    }
+  },
+  created () {
+    this.touch = {}
+  },
+  computed: {
+    shortcutList () {
+      return this.data.map((group) => {
+        return group.title.substr(0, 1)
+      })
+    }
+  },
+  methods: {
+    // 点击右侧，左侧联动
+    onShortcutTouchStart (event) {
+      // 获取第一次手指触摸的元素
+      let firstTouch = event.touches[0]
+      // 获取第一次手指触摸的元素Y值
+      this.touch.y1 = firstTouch.pageY
+      // 获取第一次手指触摸的元素索引
+      let firstIndex = MyDom.getElementIndex(event.target, 'index')
+      // 把第一次手指触摸的元素索引保存起来
+      this.touch.firstIndex = firstIndex
+      // 点击右侧，左侧联动到相应的位置
+      this._scrollTo(firstIndex)
+    },
+    // 滑动右侧，左侧滚动到相应位置
+    onShortcutTouchMove (event) {
+      // 获取最后一次手指触摸的元素
+      let lastTouch = event.touches[0]
+      // 获取最后一次手指触摸的元素Y值
+      this.touch.y2 = lastTouch.pageY
+      // 两次 touch y轴偏移量
+      let delta = Math.floor((this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT)
+      // 移动到的元素索引
+      let targetIndex = Number(this.touch.firstIndex) + delta
+      this._scrollTo(targetIndex)
+    },
+    // 点击/触摸 移动/滚动 到目标元素
+    _scrollTo (index) {
+      this.$refs.scroll.scrollToElement(this.$refs.listGroup[index], 0)
     }
   }
 };

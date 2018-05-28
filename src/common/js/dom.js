@@ -13,5 +13,13 @@ export const MyDom = {
     let newClass = el.className.split('')
     newClass.push(className)
     el.className = newClass.join('')
+  },
+
+  getElementIndex (el, name, val) {
+    if (val) {
+      return el.setAttribute(`data-${name}`, val)
+    } else {
+      return el.getAttribute(`data-${name}`)
+    }
   }
 }
