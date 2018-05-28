@@ -38,7 +38,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             host: 'c.y.qq.com'
           },
           params: req.query
-        }).then((response) => {s
+        }).then((response) => {
           res.json(response.data)
         }).catch((e) => {
           console.log(e)

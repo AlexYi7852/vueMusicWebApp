@@ -1,7 +1,9 @@
 
 <template>
   <div class="singer">
+    <singer-wrapper :data="singerList">
 
+    </singer-wrapper>
   </div>  
 </template>
 
@@ -10,9 +12,11 @@ import Scroll from 'base/scroll'
 import { MySinger } from 'api/singer'
 import { ERR_OK } from 'api/config'
 import Singer from 'common/js/singer'
+import SingerWrapper from 'base/singerWrapper'
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10 
 export default {
+  components: { Scroll, SingerWrapper },
   data () {
     return {
       singerList: []
@@ -25,8 +29,7 @@ export default {
     _getSingerList () {
       MySinger.getSingerList().then((res) => {
         if (res.code === ERR_OK) {
-          this.singerList = res.data.list
-          console.log(this._normalizeSinger(this.singerList))
+          this.singerList = this._normalizeSinger(res.data.list)
         }
       })
     },
