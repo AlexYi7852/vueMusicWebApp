@@ -24,6 +24,7 @@ export default {
       type: Array,
       default: null  
     },
+    // 监听scroll组件滚动
     listenScroll: {
       type: Boolean,
       default: false
@@ -36,12 +37,16 @@ export default {
     }, 20)
   },
   methods: {
+    // 初始化scroll组件
     _initScroll () {
+      // 如果dom还未生成， 直接return
       if (!this.$refs.scrollWrapper) { return }
+      // 生成scroll实例
       this.scroll = new BScroll(this.$refs.scrollWrapper, {
         probeType: this.probeType,
         click: this.click
       })
+      // 监听scroll组件滚动，并向父组件传递scroll组件坐标
       if (this.listenScroll) {
         let _self = this
         this.scroll.on('scroll', (pos) => {

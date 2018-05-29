@@ -18,13 +18,6 @@ export default {
       type: String,
       default: '玩命加载中...'
     }
-  },
-  watch: {},
-  methods: {},
-  created () {},
-  mounted () {},
-  destroyed () {
-    // 良好的习惯：销毁定时器
   }
 }
 </script>

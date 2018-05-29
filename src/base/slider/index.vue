@@ -4,6 +4,7 @@
     <div class="slider-group" ref="sliderGroup">
       <slot></slot>
     </div>
+    <!-- 下面小点 -->
     <div class="dots">
       <span class="dot" v-for="(item, index) in dots" :key="index"
                    :class="{ active: currentDotsIndex === index}"></span>  
@@ -114,6 +115,7 @@ export default {
     _initDots() {
       this.dots = new Array(this.children.length);
     },
+    // 无缝循环轮播
     _initPlay() {
       let pageIndex = this.currentDotsIndex;
       if (this.loop) {
@@ -126,7 +128,7 @@ export default {
       }, this.interval);
     }
   },
-  // 当跳转页面的时候清除定时器，有利于内存释放
+  // 离开页面的时候清除定时器，有利于内存释放
   destroyed () {
     clearTimeout(this.timer)
   }

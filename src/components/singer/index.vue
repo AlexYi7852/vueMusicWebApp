@@ -1,9 +1,9 @@
 
 <template>
   <div class="singer">
-    <singer-wrapper :data="singerList">
+    <imitate-mail-list :data="singerList">
 
-    </singer-wrapper>
+    </imitate-mail-list>
   </div>  
 </template>
 
@@ -12,11 +12,12 @@ import Scroll from 'base/scroll'
 import { MySinger } from 'api/singer'
 import { ERR_OK } from 'api/config'
 import Singer from 'common/js/singer'
-import SingerWrapper from 'base/singerWrapper'
+// 通讯录组件
+import imitateMailList from 'base/imitateMailList'
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10 
 export default {
-  components: { Scroll, SingerWrapper },
+  components: { Scroll, imitateMailList },
   data () {
     return {
       singerList: []
@@ -35,14 +36,16 @@ export default {
     },
     // 组合我们所需要的数据
     _normalizeSinger (list) {
+      // 所有数据集合
       let map = {
-        hot: {
+        hot: { // 热门
           title: HOT_NAME,
           items: []
         }
       }
       list.forEach((item, index) => {
         // 组合热门数据列表
+        console.log(item, index)
         if (index < HOT_SINGER_LEN) {
           map.hot.items.push(new Singer({
             id: item.Fsinger_mid,

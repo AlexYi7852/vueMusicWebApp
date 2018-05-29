@@ -5,8 +5,7 @@
     <!-- 左侧歌手列表 -->
     <ul>
       <!-- 点击右侧，左侧联动 -->
-      <li class="list-group" v-for="(group, index) in data"
-                              :key="index" ref="listGroup">
+      <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
         <h2 class="list-group-title" :class="{'current': currentIndex === index}">
           {{ group.title }}
         </h2>
