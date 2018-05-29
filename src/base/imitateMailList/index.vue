@@ -11,7 +11,7 @@
         </h2>
         <ul>
           <li v-for="(item, index) in group.items"
-                  :key="index" class="list-group-item">
+          @click="selectItem(item)" :key="index" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" />
             <span class="name">{{ item.name }}</span>
           </li>
@@ -129,6 +129,10 @@ export default {
     }
   },
   methods: {
+    // 点击派发歌手数据
+    selectItem (item) {
+      this.$emit('select', item)
+    },
     // 点击右侧，左侧联动
     onShortcutTouchStart (event) {
       // 获取第一次手指触摸的元素

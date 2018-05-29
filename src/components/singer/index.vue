@@ -1,9 +1,8 @@
 
 <template>
   <div class="singer">
-    <imitate-mail-list :data="singerList">
-
-    </imitate-mail-list>
+    <imitate-mail-list @select="selectSinger" :data="singerList"></imitate-mail-list>
+    <router-view></router-view>
   </div>  
 </template>
 
@@ -27,6 +26,9 @@ export default {
     this._getSingerList()
   },
   methods: {
+    selectSinger (singer) {
+      this.$router.push({ path: `/singer/${singer.id}` })
+    },
     _getSingerList () {
       MySinger.getSingerList().then((res) => {
         if (res.code === ERR_OK) {
@@ -45,7 +47,6 @@ export default {
       }
       list.forEach((item, index) => {
         // 组合热门数据列表
-        console.log(item, index)
         if (index < HOT_SINGER_LEN) {
           map.hot.items.push(new Singer({
             id: item.Fsinger_mid,
