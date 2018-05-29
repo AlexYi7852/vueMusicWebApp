@@ -13,7 +13,7 @@ import { ERR_OK } from 'api/config'
 import Singer from 'common/js/singer'
 // 通讯录组件
 import imitateMailList from 'base/imitateMailList'
-import { mapMutations } from 'vuex'
+import {mapMutations} from 'vuex'
 
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10 
@@ -32,6 +32,7 @@ export default {
       this.$router.push({ path: `/singer/${singer.id}` })
       console.log(singer)
       // 提交数据到state.singer
+      console.log('hjh')
       this.setSinger(singer)
     },
     _getSingerList () {
