@@ -6,7 +6,7 @@
     </div>
     <div class="dots">
       <span class="dot" v-for="(item, index) in dots" :key="index"
-      :class="{ active: currentDotsIndex === index}"></span>  
+                   :class="{ active: currentDotsIndex === index}"></span>  
     </div>
   </div>  
 </template>
@@ -120,7 +120,7 @@ export default {
         pageIndex += 1;
       }
       this.timer = setTimeout(() => {
-        // 1.0版本以上用next()
+        // 1.0版本以上用next() 实现无缝循环轮播
         // 1.0以下用goToPage， goToPage是better-scroll内置方法
         this.slider.next();
       }, this.interval);

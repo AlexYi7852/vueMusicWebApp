@@ -1,14 +1,18 @@
 
 <template>
   <scroll ref="scroll" class="singer-wrapper" :probeType="probeType"
-   :data="data" :listenScroll="listenScroll" @scroll="scroll">
+         :data="data" :listenScroll="listenScroll" @scroll="scroll">
     <!-- 左侧歌手列表 -->
     <ul>
       <!-- 点击右侧，左侧联动 -->
-      <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
-        <h2 class="list-group-title" :class="{'current': currentIndex === index}">{{ group.title }}</h2>
+      <li class="list-group" v-for="(group, index) in data"
+                              :key="index" ref="listGroup">
+        <h2 class="list-group-title" :class="{'current': currentIndex === index}">
+          {{ group.title }}
+        </h2>
         <ul>
-          <li v-for="(item, index) in group.items" :key="index" class="list-group-item">
+          <li v-for="(item, index) in group.items"
+                  :key="index" class="list-group-item">
             <img class="avatar" v-lazy="item.avatar" />
             <span class="name">{{ item.name }}</span>
           </li>
@@ -20,10 +24,14 @@
                    @touchmove.stop.prevent="onShortcutTouchMove">
       <ul>
         <li v-for="(item, index) in shortcutList" :key="index" 
-        :class="{'current': currentIndex === index}" :data-index="index" class="item">{{ item }}</li>
+                   :class="{'current': currentIndex === index}"
+                              :data-index="index" class="item">
+        {{ item }}
+        </li>
       </ul>
     </div>
-    <div class="list-title-fixed" v-show="fixedTitle">
+    <!-- 滚动固定标题实现 -->
+    <div ref="fixedTitleRef" class="list-title-fixed" v-show="fixedTitle">
       <h1 class="fixed-title">{{ fixedTitle }}</h1>
     </div>
   </scroll>  
@@ -34,12 +42,15 @@ import Scroll from "base/scroll"
 import Loading from 'base/loading'
 import { MyDom } from 'common/js/dom'
 const ANCHOR_HEIGHT = 18
+const TITLE_HEIGHT = 29
 export default {
   components: { Scroll, Loading },
   data () {
     return {
       scrollY: -1,
-      currentIndex: 0
+      currentIndex: 0,
+      // listGroup下一个子元素距离上一个子元素title的距离
+      diff: -1
     }
   },
   props: {
@@ -55,6 +66,7 @@ export default {
     this.listenScroll = true,
     // better-scroll 属性probeType = 3的时候不会阻拦派发scroll
     this.probeType = 3,
+    // 每个listGroup子元素距顶部的距离列表
     this.listHeight = []
   },
   computed: {
@@ -64,13 +76,14 @@ export default {
         return group.title.substr(0, 1)
       })
     },
+    // 固定title
     fixedTitle () {
       if (this.scrollY > 0) { return '' }
       return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
   watch: {
-    // 监听data变化，计算每个listGroup的高度
+    // 监听data变化，计算每个listGroup子元素距顶部的距离
     data () {
       setTimeout(() => {
         this._calculateHeight()
@@ -78,22 +91,37 @@ export default {
     },
     // 监听 scrollY 落在listGroup哪个子元素区间，实现高亮联动
     scrollY (newY) {
-      console.log(newY)
       const listHeight = this.listHeight
       // 当滚动到顶部
       if (newY > 0) { this.currentIndex = 0; return }
 
       // 滚动到中间部分
       for (let i = 0; i < listHeight.length - 1; i++) {
+        // 第一个子元素距顶部的距离，依次累加
         let height1 = listHeight[i]
         let height2 = listHeight[i + 1]
+        // 当-Y值小于等于height1 并且大于height，
+        // 就知道currentIndex在哪个子元素区间
         if (-newY >= height1 && -newY < height2) {
           this.currentIndex = i
+          // 计算下一个子元素距离上一个子元素title的距离
+          this.diff = height2 + newY
           return
         }
       }
       // 当滚动到底部， 并且-newY > 最后一个元素的上限
       this.currentIndex = listHeight - 2
+    },
+    // 监听listGroup下一个子元素距离上一个子元素title的距离
+    // 从而获得fixedTitle什么时候该 往上/往下 偏移, 并获取的它的偏移量
+    diff (newVal) {
+      // 如果diff大于0并且小于title的高度就获取它的偏移量并让title偏移，否则就什么都不做
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      // 当偏移量等于title的高度时, 什么也不做 
+      if(this.fixedTop === fixedTop) { return }
+      this.fixedTop = fixedTop
+      // 给title添加偏移量
+      this.$refs.fixedTitleRef.style.transform = `translate3d(0, ${fixedTop}px, 0)`
     }
   },
   methods: {
@@ -128,14 +156,16 @@ export default {
     },
     // 计算每个listGroup子元素的高度
     _calculateHeight () {
-      // 遍历listGroup， 获取每个子元素的高度
+      // 遍历listGroup， 获取每个子元素的距顶部的高度
       const list = this.$refs.listGroup
+      // 第一个子元素是0
       let height = 0
       this.listHeight.push(height)
       // 把每个子元素的高度添加到this.listHeight
       for (let i = 0; i < list.length; i++) {
         let item = list[i]
         height += item.clientHeight
+        // 把每个子元素的距顶部的高度添加到this.listHeight
         this.listHeight.push(height)
       }
     },
