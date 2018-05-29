@@ -6,6 +6,22 @@
   </transition>
 </template>
 
+<script>
+import { mapGetters } from 'vuex'
+export default {
+  computed: {
+    ...mapGetters([
+      'singer'
+    ])
+  },
+  created () {
+    console.log('hello')
+    // console.log(this.singer)
+  }
+}
+</script>
+
+
 <style lang="scss" scoped>
 @import 'common/scss/variable';
 @import 'common/scss/mixin';
