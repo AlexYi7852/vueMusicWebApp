@@ -34,6 +34,11 @@
     <div ref="fixedTitleRef" class="list-title-fixed" v-show="fixedTitle">
       <h1 class="fixed-title">{{ fixedTitle }}</h1>
     </div>
+
+    <!-- loading 组件 -->
+    <div v-show="!data.length" class="loading-container">
+      <loading></loading>
+    </div>
   </scroll>  
 </template>
 
@@ -54,7 +59,7 @@ export default {
     }
   },
   props: {
-    // 从父元素传过来的数据
+    // 从父组件传过来的数据列表
     data: {
       type: Array,
       default: []
