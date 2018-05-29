@@ -1,3 +1,4 @@
+
 import Vue from 'vue'
 import Router from 'vue-router'
 import Recommend from 'components/recommend' // 推荐页
@@ -15,8 +16,8 @@ export default new Router({
     { path: '/recommend', component: Recommend },
     { path: '/ranking', component: Ranking },
     { path: '/search', component: Search },
-    { 
-      path: '/singer', 
+    {
+      path: '/singer',
       component: Singer,
       children: [
         {
