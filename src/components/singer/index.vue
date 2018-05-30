@@ -15,7 +15,7 @@ import Singer from 'common/js/singer'
 // 通讯录组件
 import imitateMailList from 'base/imitateMailList'
 const HOT_NAME = '热门'
-const HOT_SINGER_LEN = 10 
+const HOT_SINGER_LEN = 10 // 热门数据长度
 export default {
   components: { Scroll, imitateMailList },
   data () {
@@ -38,20 +38,20 @@ export default {
     _normalizeSinger (list) {
       // 所有数据集合
       let map = {
-        hot: { // 热门
+        hot: {
           title: HOT_NAME,
           items: []
         }
       }
       list.forEach((item, index) => {
-        // 组合热门数据列表
-        console.log(item, index)
+        // 当索引小于10, 组合热门数据列表
         if (index < HOT_SINGER_LEN) {
           map.hot.items.push(new Singer({
             id: item.Fsinger_mid,
             name: item.Fsinger_name
           }))
         }
+        // 字母/ title
         const key = item.Findex
         if (!map[key]) {
           map[key] = {
@@ -59,22 +59,26 @@ export default {
             items: []
           }
         }
+        // 组合其它字母的数据
         map[key].items.push(new Singer({
           id: item.Fsinger_mid,
           name: item.Fsinger_name
         }))
       })
       // 为了得到有序列表， 我们需要处理map
-      let hot = []
-      let rest = []
+      let hot = []  // 热门数据列表
+      let rest = [] // 其它字母数据列表
       for (let key in map) {
-        let val = map[key]
+        let val = map[key]  // 数据
+        // 如果title是字母, 就添加到rest列表
         if (val.title.match(/[a-zA-Z]/)) {
           rest.push(val)
+        // 其它的添加到热门列表  
         } else if (val.title === HOT_NAME) {
           hot.push(val)
         }
       }
+      // 把字母数据列表进行排序
       rest.sort((a, b) => {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
