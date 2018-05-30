@@ -1,6 +1,6 @@
 // 根级别的 mutation
 
-import * as types from './mutations-type.js'
+import * as types from './mutations-types.js'
 
 const mutations = {
   [types.SET_SINGER] (state, singer) {
