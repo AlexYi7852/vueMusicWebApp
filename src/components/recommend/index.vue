@@ -67,7 +67,6 @@ export default {
     },
     // 抓取推荐页歌单列表数据
     _getDiscList () {
-      console.log(MyRecommend)
       MyRecommend.getDiscList().then((res) => {
         if (res.code === ERR_OK) {
           this.discList = res.data.list

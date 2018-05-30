@@ -1,9 +1,8 @@
 
 <template>
   <div class="singer">
-    <imitate-mail-list :data="singerList">
-
-    </imitate-mail-list>
+    <imitate-mail-list @select="selectSinger" :data="singerList"></imitate-mail-list>
+    <router-view></router-view>
   </div>  
 </template>
 
@@ -14,6 +13,8 @@ import { ERR_OK } from 'api/config'
 import Singer from 'common/js/singer'
 // 通讯录组件
 import imitateMailList from 'base/imitateMailList'
+import { mapMutations } from 'vuex'
+
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10 // 热门数据长度
 export default {
@@ -27,6 +28,12 @@ export default {
     this._getSingerList()
   },
   methods: {
+    selectSinger (singer) {
+      this.$router.push({ path: `/singer/${singer.id}` })
+      console.log(singer)
+      // 提交数据到store.state.singer
+      this.setSinger(singer)
+    },
     _getSingerList () {
       MySinger.getSingerList().then((res) => {
         if (res.code === ERR_OK) {
@@ -83,7 +90,10 @@ export default {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0)
       })
       return hot.concat(rest)
-    }
+    },
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
   }
 }
 </script>
