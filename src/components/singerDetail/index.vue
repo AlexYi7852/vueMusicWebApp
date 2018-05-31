@@ -10,7 +10,11 @@
 import { mapGetters } from 'vuex'
 import { MySinger } from 'api/singer'
 import { ERR_OK } from 'api/config'
+// import { createSong } from 'common/js/song'
 export default {
+  data () {
+    songs: []
+  },
   computed: {
     ...mapGetters([
       'singer'
@@ -22,12 +26,28 @@ export default {
   },
   methods: {
     _getDetail () {
+      if (!this.singer.id) {
+        this.$router.push('/singer')
+        return
+      }
       MySinger.getSingerDetail(this.singer.id).then((res) => {
         if (res.code === ERR_OK) {
-          console.log(res.data.list)
+          // this.songs = this._handlerSongs(res.data.list)
+          console.log(this.songs)
         }
       })
-    }
+    },
+    // 重组歌曲列表
+    // _handlerSongs (list) {
+    //   let result = []
+    //   list.forEach((item) => {
+    //     let { musicData } = item
+    //     if (musicData.songid && musicData.albummid) {
+    //       result.push(createSong(musicData))
+    //     }
+    //   })
+    //   return result
+    // }
   }
 }
 </script>
