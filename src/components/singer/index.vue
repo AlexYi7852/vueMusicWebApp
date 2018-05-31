@@ -30,10 +30,8 @@ export default {
   methods: {
     selectSinger (singer) {
       this.$router.push({ path: `/singer/${singer.id}` })
-      console.log(singer)
       // 提交数据到state.singer
-      console.log('hjh')
-      this.setSinger(singer)
+      console.log(singer)
     },
     _getSingerList () {
       MySinger.getSingerList().then((res) => {
