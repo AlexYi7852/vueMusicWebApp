@@ -8,6 +8,7 @@
     <!-- 顶部歌手名字 -->
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="aratarStyle" ref="avatar">
+      <!-- 图片蒙层 -->
       <div class="filter" ref="filter"></div>
     </div>
     <div class="avatar-layer" ref="layer">
@@ -25,8 +26,11 @@
 <script>
 import Scroll from 'base/scroll'
 import SongList from 'base/songList'
+import { prefixStyle } from 'common/js/dom'
 // 预留回退栏高度
 const RESERCED_HEIGHT = 40
+const transform = prefixStyle('transform')
+const backdrop = prefixStyle('background-filter')
 export default {
   components: { Scroll, SongList },
   props: {
@@ -76,20 +80,18 @@ export default {
       let scale = 1 // 组件下拉的时候图片放大的倍数
       // 滚动最大的距离是图片的高度
       let tranlateY = Math.max(this.minTranslateY, newY)
-      this.$refs.layer.style['transform'] = `translate3d(0, ${tranlateY}px, 0)`
-      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${tranlateY}px, 0)`
+      this.$refs.layer.style[transform] = `translate3d(0, ${tranlateY}px, 0)`
       // 取得newY除以图片的大小
       const percent = Math.abs(newY / this.imageHeight)
+      let blur = 0 // 组件上拉图片添加蒙层
       if (newY > 0) {
         zIndex = 10
         scale = 1 + percent // 图片放大的倍数
-        let blur = 0 
       } else {
         blur = Math.min(20 * percent, 20)
       }
-      console.log(blur)
-      this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
-      this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
+      // 设置图片蒙层样式
+      this.$refs.filter.style[backdrop] = `blur(${blur}px)`
       // 当滚动条滚动到顶部的时候 改变图片的样式
       if (newY < this.minTranslateY) {
         zIndex = 10
@@ -102,8 +104,7 @@ export default {
       }
       // 设置下拉图片放大的倍数
       this.$refs.avatar.style.zIndex = zIndex
-      this.$refs.avatar.style['transform'] = `scale(${ scale })`
-      this.$refs.avatar.style['webkitTransform'] = `scale(${ scale })`
+      this.$refs.avatar.style[transform] = `scale(${ scale })`
     }
   }
 }
