@@ -8,7 +8,7 @@
     <!-- 顶部歌手名字 -->
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="aratarStyle" ref="avatar">
-      <div class="filter"></div>
+      <div class="filter" ref="filter"></div>
     </div>
     <div class="avatar-layer" ref="layer">
 
@@ -73,20 +73,37 @@ export default {
     // 推层动画逻辑
     scrollY (newY) {
       let zIndex = 0
+      let scale = 1 // 组件下拉的时候图片放大的倍数
       // 滚动最大的距离是图片的高度
       let tranlateY = Math.max(this.minTranslateY, newY)
       this.$refs.layer.style['transform'] = `translate3d(0, ${tranlateY}px, 0)`
       this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${tranlateY}px, 0)`
-      // 当滚动条滚动到顶部的时候
+      // 取得newY除以图片的大小
+      const percent = Math.abs(newY / this.imageHeight)
+      if (newY > 0) {
+        zIndex = 10
+        scale = 1 + percent // 图片放大的倍数
+        let blur = 0 
+      } else {
+        blur = Math.min(20 * percent, 20)
+      }
+      console.log(blur)
+      this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
+      this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
+      // 当滚动条滚动到顶部的时候 改变图片的样式
       if (newY < this.minTranslateY) {
         zIndex = 10
         this.$refs.avatar.style.paddingTop = 0
         this.$refs.avatar.style.height = `${ RESERCED_HEIGHT }px`
+      // 否则重置样式
       } else {
         this.$refs.avatar.style.paddingTop = '70%'
         this.$refs.avatar.style.height = 0
       }
+      // 设置下拉图片放大的倍数
       this.$refs.avatar.style.zIndex = zIndex
+      this.$refs.avatar.style['transform'] = `scale(${ scale })`
+      this.$refs.avatar.style['webkitTransform'] = `scale(${ scale })`
     }
   }
 }
