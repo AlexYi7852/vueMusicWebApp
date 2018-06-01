@@ -30,19 +30,19 @@ export default {
   methods: {
     selectSinger (singer) {
       this.$router.push({ path: `/singer/${singer.id}` })
-      console.log(singer)
+      // 提交数据到state.singer
       // 提交数据到store.state.singer
       this.setSinger(singer)
     },
     _getSingerList () {
       MySinger.getSingerList().then((res) => {
         if (res.code === ERR_OK) {
-          this.singerList = this._normalizeSinger(res.data.list)
+          this.singerList = this._handlerSinger(res.data.list)
         }
       })
     },
     // 组合我们所需要的数据
-    _normalizeSinger (list) {
+    _handlerSinger (list) {
       // 所有数据集合
       let map = {
         hot: {
@@ -91,6 +91,7 @@ export default {
       })
       return hot.concat(rest)
     },
+    // 提交到vuex.store.singer
     ...mapMutations({
       setSinger: 'SET_SINGER'
     })
