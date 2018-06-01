@@ -2,12 +2,18 @@
 <template>
   <div class="music-list">
     <!-- 返回按钮 -->
-    <div class="back">
+    <div class="back" @click="back">
       <i class="icon-back"></i>  
     </div>
     <!-- 顶部歌手名字 -->
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="aratarStyle" ref="avatar">
+      <div class="play-wrapper">
+        <div class="play" v-show="songs.length > 0" ref="playBtn">
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <!-- 图片蒙层 -->
       <div class="filter" ref="filter"></div>
     </div>
@@ -19,6 +25,9 @@
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
+      <div class="loading-container" v-show="!songs.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>  
 </template>
@@ -27,12 +36,13 @@
 import Scroll from 'base/scroll'
 import SongList from 'base/songList'
 import { prefixStyle } from 'common/js/dom'
+import Loading from 'base/loading'
 // 预留回退栏高度
 const RESERCED_HEIGHT = 40
 const transform = prefixStyle('transform')
 const backdrop = prefixStyle('background-filter')
 export default {
-  components: { Scroll, SongList },
+  components: { Scroll, SongList, Loading },
   props: {
     avatar: {
       type: String,
@@ -71,6 +81,9 @@ export default {
   methods: {
     scroll (pos) {
       this.scrollY = pos.y
+    },
+    back () {
+      this.$router.back()
     }
   },
   watch: {
@@ -97,10 +110,14 @@ export default {
         zIndex = 10
         this.$refs.avatar.style.paddingTop = 0
         this.$refs.avatar.style.height = `${ RESERCED_HEIGHT }px`
+        // 随机播放按钮隐藏
+        this.$refs.playBtn.style.display = 'none'
       // 否则重置样式
       } else {
         this.$refs.avatar.style.paddingTop = '70%'
         this.$refs.avatar.style.height = 0
+        // 随机播放按钮显示
+        this.$refs.playBtn.style.display = 'block'
       }
       // 设置下拉图片放大的倍数
       this.$refs.avatar.style.zIndex = zIndex
