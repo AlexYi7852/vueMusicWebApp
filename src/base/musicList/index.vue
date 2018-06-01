@@ -1,14 +1,20 @@
 
 <template>
   <div class="music-list">
+    <!-- 返回按钮 -->
     <div class="back">
       <i class="icon-back"></i>  
     </div>
+    <!-- 顶部歌手名字 -->
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="aratarStyle" ref="avatar">
       <div class="filter"></div>
     </div>
-    <scroll :data="songs" class="list" ref="scrollList">
+    <div class="avatar-layer" ref="layer">
+
+    </div>
+    <scroll @scroll="scroll" :probeType="probeType" 
+    :listenScroll="listenScroll" :data="songs" class="list" ref="scrollList">
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
@@ -19,6 +25,8 @@
 <script>
 import Scroll from 'base/scroll'
 import SongList from 'base/songList'
+// 预留回退栏高度
+const RESERCED_HEIGHT = 40
 export default {
   components: { Scroll, SongList },
   props: {
@@ -35,13 +43,51 @@ export default {
       default: ''
     }
   },
+  data () {
+    return {
+      scrollY: 0
+    }
+  },
+  created () {
+    this.probeType = 3
+    this.listenScroll = true
+  },
   mounted () {
-    this.$refs.scrollList.$el.style.top = `${this.$refs.avatar.clientHeight}px`
+    this.imageHeight = this.$refs.avatar.clientHeight
+    // 记录最大滚动距离 = 图片高度 - 回退栏高度
+    this.minTranslateY = -this.imageHeight + RESERCED_HEIGHT
+    // scroll组件距离顶部的高度 = 图片高度
+    this.$refs.scrollList.$el.style.top = `${this.imageHeight}px`
   },
   computed: {
     aratarStyle () {
       return `background-image: url(${this.avatar})`
-    }  
+    }
+  },
+  methods: {
+    scroll (pos) {
+      this.scrollY = pos.y
+    }
+  },
+  watch: {
+    // 推层动画逻辑
+    scrollY (newY) {
+      let zIndex = 0
+      // 滚动最大的距离是图片的高度
+      let tranlateY = Math.max(this.minTranslateY, newY)
+      this.$refs.layer.style['transform'] = `translate3d(0, ${tranlateY}px, 0)`
+      this.$refs.layer.style['webkitTransform'] = `translate3d(0, ${tranlateY}px, 0)`
+      // 当滚动条滚动到顶部的时候
+      if (newY < this.minTranslateY) {
+        zIndex = 10
+        this.$refs.avatar.style.paddingTop = 0
+        this.$refs.avatar.style.height = `${ RESERCED_HEIGHT }px`
+      } else {
+        this.$refs.avatar.style.paddingTop = '70%'
+        this.$refs.avatar.style.height = 0
+      }
+      this.$refs.avatar.style.zIndex = zIndex
+    }
   }
 }
 </script>
@@ -126,7 +172,7 @@ export default {
       background: rgba(7, 17, 27, 0.4);
     }
   }
-  .bg-layer {
+  .avatar-layer {
     position: relative;
     height: 100%;
     background: $color-background;
@@ -136,6 +182,7 @@ export default {
     top: 0;
     bottom: 0;
     width: 100%;
+    // overflow: hidden;
     background: $color-background;
     .song-list-wrapper {
       padding: 20px 30px;
