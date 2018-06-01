@@ -5,14 +5,22 @@
       <i class="icon-back"></i>  
     </div>
     <h1 class="title" v-html="title"></h1>
-    <div class="bg-image" :style="aratarStyle">
+    <div class="bg-image" :style="aratarStyle" ref="avatar">
       <div class="filter"></div>
     </div>
+    <scroll :data="songs" class="list" ref="scrollList">
+      <div class="song-list-wrapper">
+        <song-list :songs="songs"></song-list>
+      </div>
+    </scroll>
   </div>  
 </template>
 
 <script>
+import Scroll from 'base/scroll'
+import SongList from 'base/songList'
 export default {
+  components: { Scroll, SongList },
   props: {
     avatar: {
       type: String,
@@ -26,6 +34,9 @@ export default {
       type: String,
       default: ''
     }
+  },
+  mounted () {
+    this.$refs.scrollList.$el.style.top = `${this.$refs.avatar.clientHeight}px`
   },
   computed: {
     aratarStyle () {
