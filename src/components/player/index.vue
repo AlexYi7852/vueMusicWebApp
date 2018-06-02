@@ -3,7 +3,7 @@
     <!-- 展开播放器 -->
     <div class="normal-player" v-show="fullScreen">播放器</div>
     <!-- 迷你播放器 -->
-    <div class="mini-player" v-show="fullScreen"></div>
+    <div class="mini-player" v-show="!fullScreen"></div>
   </div>
 </template>
 

@@ -23,7 +23,7 @@
     <scroll @scroll="scroll" :probeType="probeType" 
     :listenScroll="listenScroll" :data="songs" class="list" ref="scrollList">
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list @select="selectItem" :songs="songs"></song-list>
       </div>
       <div class="loading-container" v-show="!songs.length">
         <loading></loading>
@@ -34,9 +34,11 @@
 
 <script>
 import Scroll from 'base/scroll'
-import SongList from 'base/songList'
-import { prefixStyle } from 'common/js/dom'
 import Loading from 'base/loading'
+import SongList from 'base/songList'
+
+import { prefixStyle } from 'common/js/dom'
+import { mapActions } from 'vuex'
 // 预留回退栏高度
 const RESERCED_HEIGHT = 40
 const transform = prefixStyle('transform')
@@ -74,11 +76,24 @@ export default {
     this.$refs.scrollList.$el.style.top = `${this.imageHeight}px`
   },
   computed: {
+    // 计算头像的url
     aratarStyle () {
       return `background-image: url(${this.avatar})`
     }
   },
   methods: {
+    // 设置store播放器的展开状态，传入播放列表， 播放歌曲index 
+    selectItem (item, index) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      })
+    },
+    // 调用actions.selectPlay方法
+    ...mapActions([
+      'selectPlay'
+    ]),
+    // 接收子组件scroll事件的pos对象
     scroll (pos) {
       this.scrollY = pos.y
     },
