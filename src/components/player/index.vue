@@ -1,6 +1,23 @@
 <template>
-  <div class="player-wrap"></div>  
+  <div class="player-wrap" v-show="playList.length > 0">
+    <!-- 展开播放器 -->
+    <div class="normal-player" v-show="fullScreen">播放器</div>
+    <!-- 迷你播放器 -->
+    <div class="mini-player" v-show="fullScreen"></div>
+  </div>
 </template>
+
+<script>
+import { mapGetters } from 'vuex'
+export default {
+  computed: {
+    ...mapGetters([
+      'fullScreen',
+      'playList'
+    ])
+  }
+}
+</script>
 
 
 <style lang="scss" scoped>

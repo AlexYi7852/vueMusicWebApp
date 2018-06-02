@@ -12,7 +12,7 @@ const state = {
   // 播放器展开状态
   fullScreen: false,
   // 播放歌曲列表
-  playlist: [],
+  playList: [],
   // 顺序播放列表
   sequenceList: [],
   // 播放模式
