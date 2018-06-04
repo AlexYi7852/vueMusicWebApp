@@ -37,7 +37,9 @@
           <!-- 播放进度条 -->
           <div class="progress-wrapper">
             <span class="time time-l">{{ format(currentTime) }}</span>
-            <div class="progress-bar-wrapper"></div>
+            <div class="progress-bar-wrapper">
+              <progress-bar :percent="percent"></progress-bar>
+            </div>
             <span class="time time-r">{{ format(currentSong.duration) }}</span>
           </div>
           <!-- 底部控制栏 -->
@@ -89,12 +91,14 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import ProgressBar from 'base/progressBar'
 // 动画插件
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
 // 添加transform前缀
 const transform = prefixStyle('transform')
 export default {
+  components: { ProgressBar },
   data () {
     return {
       songReady: false, // 歌曲是否播放成功
@@ -102,8 +106,13 @@ export default {
     }
   },
   computed: {
+    // 当歌曲url未加载或者加载失败禁止点击 前进/后退
     disableCls () {
       return this.songReady ? '' : 'disable'
+    },
+    // 获取当前歌曲播放时间相对于总时长比例
+    percent () {
+      return this.currentTime / this.currentSong.duration
     },
     ...mapGetters([
       'fullScreen',
