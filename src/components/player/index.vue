@@ -34,6 +34,12 @@
         </div>
         <!-- 底部操作区 -->
         <div class="bottom">
+          <!-- 播放进度条 -->
+          <div class="progress-wrapper">
+            <span class="time time-l">{{ format(currentTime) }}</span>
+            <div class="progress-bar-wrapper"></div>
+            <span class="time time-r">{{ format(currentSong.duration) }}</span>
+          </div>
           <!-- 底部控制栏 -->
           <div class="operators">
             <div class="icon i-left">
@@ -75,8 +81,9 @@
         </div>
       </div>
     </transition>
-    <!-- 播放的时候会派发canplay事件, 请求播放url错误会派发error事件 -->
-    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"></audio>
+    <!-- 播放成功的时候会派发canplay事件和timeUpdate事件, 播放失败会派发error事件 -->
+    <audio ref="audio" :src="currentSong.url" @timeupdate="updateTime"
+                                 @canplay="ready" @error="error"></audio>
   </div>
 </template>
 
@@ -85,12 +92,13 @@ import { mapGetters, mapMutations } from 'vuex'
 // 动画插件
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
-
+// 添加transform前缀
 const transform = prefixStyle('transform')
 export default {
   data () {
     return {
-      songReady: false
+      songReady: false, // 歌曲是否播放成功
+      currentTime: 0 // 当前播放时间
     }
   },
   computed: {
@@ -154,6 +162,26 @@ export default {
     error () {
       console.log('error')
       this.songReady = true
+    },
+    updateTime (e) {
+      // e.target.currentTime表示audio当前的播放时间
+      this.currentTime = e.target.currentTime
+    },
+    // 把播放时间转换成分秒的形式
+    format (interval) {
+      interval = interval | 0
+      let minute = this._pad(interval / 60 | 0)
+      let second = this._pad(interval % 60)
+      return `${minute}:${second}`
+    },
+    // 给播放时间补0
+    _pad (num) {
+      let len = num.toString().length
+      while (len < 2) {
+        num = '0' + num
+        len++
+      }
+      return num
     },
     // 计算偏移量和缩放比例
     _getPosAndScale () {
@@ -221,12 +249,14 @@ export default {
     }
   },
   watch: {
+    // 监听currentSong, 然后播放歌曲
     currentSong () {
       // 添加延时，然后播放
       this.$nextTick(() => {
         this.$refs.audio.play()
       })
     },
+    // 监听playing, 播放器 暂停/播放
     playing (newPlaying) {
       let audio = this.$refs.audio
       this.$nextTick(() => {
