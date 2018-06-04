@@ -38,7 +38,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{ format(currentTime) }}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar :percent="percent"></progress-bar>
+              <progress-bar @percentChange="onProgressBarChange" :percent="percent"></progress-bar>
             </div>
             <span class="time time-r">{{ format(currentSong.duration) }}</span>
           </div>
@@ -76,7 +76,7 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <i class="icon-mini"></i>
+          <i :class="playing ? 'icon-pause-mini' : 'icon-play-mini'" class="icon-mini"></i>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -182,6 +182,13 @@ export default {
       let minute = this._pad(interval / 60 | 0)
       let second = this._pad(interval % 60)
       return `${minute}:${second}`
+    },
+    // 监听子组件进度条改变
+    onProgressBarChange (percent) {
+      // 设置当前歌曲播放时间
+      this.$refs.audio.currentTime = this.currentSong.duration * percent
+      // 如果当前是暂停的，拖动进度条之后播放
+      if (!this.playing) { this.togglePlay() }
     },
     // 给播放时间补0
     _pad (num) {
