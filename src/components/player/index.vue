@@ -45,7 +45,7 @@
           <!-- 底部控制栏 -->
           <div class="operators">
             <div class="icon i-left">
-              <i class="icon-sequence"></i>
+              <i :class="iconMode" @click="changeMode"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i @click="prev" class="icon-prev"></i>
@@ -95,6 +95,7 @@
 import { mapGetters, mapMutations } from 'vuex'
 import ProgressBar from 'base/progressBar'
 import ProgressCircle from 'base/progressCircle'
+import { playMode } from 'common/js/config'
 // 动画插件
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
@@ -110,6 +111,9 @@ export default {
     }
   },
   computed: {
+    iconMode () {
+      return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+    },
     // 当歌曲url未加载或者加载失败禁止点击 前进/后退
     disableCls () {
       return this.songReady ? '' : 'disable'
@@ -123,10 +127,15 @@ export default {
       'playList',
       'currentSong',
       'currentIndex',
-      'playing'
+      'playing',
+      'mode'
     ])
   },
   methods: {
+    changeMode () {
+      let mode = (this.mode + 1) % 3
+      this.setPlayMode(mode)
+    },
     // 最小化播放器
     back () {
       this.setFullScreen(false)
@@ -139,7 +148,8 @@ export default {
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLATING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayMode: 'SET_PLAY_MODE'
     }),
     // 播放/暂停
     togglePlay () {
