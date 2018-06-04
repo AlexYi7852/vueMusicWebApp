@@ -76,7 +76,9 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <i :class="playing ? 'icon-pause-mini' : 'icon-play-mini'" class="icon-mini"></i>
+          <progress-circle :radius="radius" :percent="percent">
+            <i :class="playing ? 'icon-pause-mini' : 'icon-play-mini'" class="icon-mini"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -92,17 +94,19 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import ProgressBar from 'base/progressBar'
+import ProgressCircle from 'base/progressCircle'
 // 动画插件
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
 // 添加transform前缀
 const transform = prefixStyle('transform')
 export default {
-  components: { ProgressBar },
+  components: { ProgressBar, ProgressCircle },
   data () {
     return {
       songReady: false, // 歌曲是否播放成功
-      currentTime: 0 // 当前播放时间
+      currentTime: 0, // 当前播放时间
+      radius: 32
     }
   },
   computed: {
