@@ -43,7 +43,7 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="icon-play"></i>
+              <i @click="togglePlay"  :class="playIcon"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -72,6 +72,7 @@
         </div>
       </div>
     </transition>
+    <audio ref="audio" :src="currentSong.url"></audio>
   </div>
 </template>
 
@@ -84,11 +85,15 @@ import { prefixStyle } from 'common/js/dom'
 const transform = prefixStyle('transform')
 export default {
   computed: {
+    playIcon () {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    },
     ...mapGetters([
       'fullScreen',
       'playList',
       'currentSong',
-      'currentIndex'
+      'currentIndex',
+      'playing'
     ])
   },
   methods: {
@@ -102,8 +107,13 @@ export default {
     },
     // 把mutations的一些方法调用出来
     ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN'
+      setFullScreen: 'SET_FULL_SCREEN',
+      setPlayingState: 'SET_PLATING_STATE'
     }),
+    // 播放/暂停
+    togglePlay () {
+      this.setPlayingState(!this.playing)
+    },
     // 计算偏移量和缩放比例
     _getPosAndScale () {
       // 迷你CD唱片宽
@@ -161,12 +171,26 @@ export default {
       this.$refs.cdWrapper.style.transition = 'all 0.4s'
       let {x, y, scale} = this._getPosAndScale()
       this.$refs.cdWrapper.style[transform] = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+      // 监听transition动画结束，调用done(回调), 随之执行afterLeave
       this.$refs.cdWrapper.addEventListener('transitionend', done)
     },
     afterLeave () {
-      // 销毁动画函数move, 然后把样式置为空
       this.$refs.cdWrapper.style.transition = ''
       this.$refs.cdWrapper.style[transform] = ''
+    }
+  },
+  watch: {
+    currentSong () {
+      // 添加延时，然后播放
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+      })
+    },
+    playing (newPlaying) {
+      let audio = this.$refs.audio
+      this.$nextTick(() => {
+        newPlaying ? audio.play() : audio.pause()
+      })
     }
   }
 }
