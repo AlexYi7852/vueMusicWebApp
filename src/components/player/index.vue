@@ -96,6 +96,8 @@ import { mapGetters, mapMutations } from 'vuex'
 import ProgressBar from 'base/progressBar'
 import ProgressCircle from 'base/progressCircle'
 import { playMode } from 'common/js/config'
+// 打乱数组方法
+import { shuffle } from 'common/js/utils'
 // 动画插件
 import animations from 'create-keyframe-animation'
 import { prefixStyle } from 'common/js/dom'
@@ -128,13 +130,31 @@ export default {
       'currentSong',
       'currentIndex',
       'playing',
-      'mode'
+      'mode',
+      'sequenceList'
     ])
   },
   methods: {
+    // 切换播放模式
     changeMode () {
       let mode = (this.mode + 1) % 3
       this.setPlayMode(mode)
+      let list = null
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList)
+      } else {
+        list = this.sequenceList
+      }
+      this._resetCurrentIndex(list)
+      this.setPlayList(list)
+    },
+    // 重置currentIndex
+    _resetCurrentIndex (list) {
+      // fingIndex是es6的语法接收一个函数，可以拿到每个list元素
+      let index = list.findIndex((item) => {
+        return item.id === this.currentSong.id
+      })
+      this.setCurrentIndex(index)
     },
     // 最小化播放器
     back () {
@@ -149,7 +169,8 @@ export default {
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLATING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX',
-      setPlayMode: 'SET_PLAY_MODE'
+      setPlayMode: 'SET_PLAY_MODE',
+      setPlayList: 'SET_PLAYLIST'
     }),
     // 播放/暂停
     togglePlay () {
@@ -280,7 +301,8 @@ export default {
   },
   watch: {
     // 监听currentSong, 然后播放歌曲
-    currentSong () {
+    currentSong (newSong, oldSong) {
+      // if (newSong.id === oldSong.id) { return } 
       // 添加延时，然后播放
       this.$nextTick(() => {
         this.$refs.audio.play()
