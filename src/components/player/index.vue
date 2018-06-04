@@ -40,13 +40,13 @@
               <i class="icon-sequence"></i>
             </div>
             <div class="icon i-left">
-              <i class="icon-prev"></i>
+              <i @click="prev" class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i @click="togglePlay"  :class="playIcon"></i>
+              <i @click="togglePlay"  :class="playing ? 'icon-pause' : 'icon-play' "></i>
             </div>
             <div class="icon i-right">
-              <i class="icon-next"></i>
+              <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -60,13 +60,15 @@
     <transition name="mini">
       <div @click="open" class="mini-player" v-show="!fullScreen">
         <div class="icon">
-          <img width="40" height="40" :src="currentSong.image" />
+          <img width="40" height="40" :class="playing ? 'play' : 'play pause'" :src="currentSong.image" />
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
-        <div class="control"></div>
+        <div class="control">
+          <i class="icon-mini"></i>
+        </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
@@ -85,8 +87,8 @@ import { prefixStyle } from 'common/js/dom'
 const transform = prefixStyle('transform')
 export default {
   computed: {
-    playIcon () {
-      return this.playing ? 'icon-pause' : 'icon-play'
+    miniIcon () {
+
     },
     ...mapGetters([
       'fullScreen',
@@ -108,11 +110,24 @@ export default {
     // 把mutations的一些方法调用出来
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLATING_STATE'
+      setPlayingState: 'SET_PLATING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     }),
     // 播放/暂停
     togglePlay () {
       this.setPlayingState(!this.playing)
+    },
+    // 下一首
+    next () {
+      let index = this.currentIndex + 1
+      if (index === this.playList.length) { index = 0 }
+      this.setCurrentIndex(index)
+    },
+    // 上一首
+    prev () {
+      let index = this.currentIndex - 1
+      if (index === -1) {index = this.playList.length - 1}
+      this.setCurrentIndex(index)
     },
     // 计算偏移量和缩放比例
     _getPosAndScale () {
