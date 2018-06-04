@@ -74,7 +74,8 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <!-- 播放的时候会派发canplay事件, 请求播放url错误会派发error事件 -->
+    <audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error"></audio>
   </div>
 </template>
 
@@ -86,10 +87,12 @@ import { prefixStyle } from 'common/js/dom'
 
 const transform = prefixStyle('transform')
 export default {
+  data () {
+    return {
+      songReady: false
+    }
+  },
   computed: {
-    miniIcon () {
-
-    },
     ...mapGetters([
       'fullScreen',
       'playList',
@@ -119,15 +122,34 @@ export default {
     },
     // 下一首
     next () {
+      // if (!this.songReady) { return }
       let index = this.currentIndex + 1
       if (index === this.playList.length) { index = 0 }
       this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlay()
+      }
+      this.songReady = false
     },
     // 上一首
     prev () {
+      // if (!this.songReady) { return }
       let index = this.currentIndex - 1
       if (index === -1) {index = this.playList.length - 1}
       this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlay()
+      }
+      this.songReady = false
+    },
+    // audio标签成功播放派发的事件
+    ready () {
+      console.log('hello')
+      this.songReady = true
+    },
+    // audio标签播放失败派发的事件
+    error () {
+      console.log('error')
     },
     // 计算偏移量和缩放比例
     _getPosAndScale () {
