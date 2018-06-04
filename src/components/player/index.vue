@@ -23,10 +23,10 @@
         </div>
         <!-- 中间区域 -->
         <div class="middle">
-          <!-- 唱片 -->
           <div class="middle-l">
+            <!-- 唱片 -->
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
+              <div class="cd" :class="playing ? 'play' : 'play pause' ">
                 <img class="image" :src="currentSong.image" />
               </div>
             </div>
@@ -39,13 +39,13 @@
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
+            <div class="icon i-left" :class="disableCls">
               <i @click="prev" class="icon-prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disableCls">
               <i @click="togglePlay"  :class="playing ? 'icon-pause' : 'icon-play' "></i>
             </div>
-            <div class="icon i-right">
+            <div class="icon i-right" :class="disableCls">
               <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
@@ -60,7 +60,8 @@
     <transition name="mini">
       <div @click="open" class="mini-player" v-show="!fullScreen">
         <div class="icon">
-          <img width="40" height="40" :class="playing ? 'play' : 'play pause'" :src="currentSong.image" />
+          <img width="40" height="40" :class="playing ? 'play' : 'play pause'"
+                                                    :src="currentSong.image" />
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
@@ -93,6 +94,9 @@ export default {
     }
   },
   computed: {
+    disableCls () {
+      return this.songReady ? '' : 'disable'
+    },
     ...mapGetters([
       'fullScreen',
       'playList',
@@ -122,7 +126,7 @@ export default {
     },
     // 下一首
     next () {
-      // if (!this.songReady) { return }
+      if (!this.songReady) { return }
       let index = this.currentIndex + 1
       if (index === this.playList.length) { index = 0 }
       this.setCurrentIndex(index)
@@ -133,7 +137,7 @@ export default {
     },
     // 上一首
     prev () {
-      // if (!this.songReady) { return }
+      if (!this.songReady) { return }
       let index = this.currentIndex - 1
       if (index === -1) {index = this.playList.length - 1}
       this.setCurrentIndex(index)
@@ -144,12 +148,12 @@ export default {
     },
     // audio标签成功播放派发的事件
     ready () {
-      console.log('hello')
       this.songReady = true
     },
     // audio标签播放失败派发的事件
     error () {
       console.log('error')
+      this.songReady = true
     },
     // 计算偏移量和缩放比例
     _getPosAndScale () {
