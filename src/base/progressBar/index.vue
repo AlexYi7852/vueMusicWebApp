@@ -39,18 +39,19 @@ export default {
       this.touch.init = true
       // 开始滑动的位置
       this.touch.startX = e.touches[0].pageX
-      // 当前偏移
+      console.log(this.touch.startX, 'startX')
+      // 记录进度条宽度
       this.touch.left = this.$refs.progressRef.clientWidth
+      console.log(this.touch.left, 'left')
     },
     // 拖动小球改变播放进度，小球滑动过程中
     progressTouchMove (e) {
-      if (!this.touch.init) return
-
-      // 滑动的差值
+      if (!this.touch.init) { return }
+      // 滑动的偏移量
       let deltaX = e.touches[0].pageX - this.touch.startX
-      // 进度条的差值，大于0，小于总长度
+      console.log(e.touches[0].pageX, 'pageX', deltaX, 'deltaX')
+      // 进度条大于0，小于总长度
       let offsetWidth = Math.min(this.$refs.barRef.clientWidth - BTN_WIDTH, Math.max(0, this.touch.left + deltaX))
-
       this._move(offsetWidth)
     },
     // 拖动小球改变播放进度，小球滑动结束
@@ -59,7 +60,9 @@ export default {
     },
     // 进度条前进 + 小球前进
     _move(offsetWidth) {
+    //   设置进度条宽度  
       this.$refs.progressRef.style.width = `${offsetWidth}px`
+      // 设置按钮偏移量
       this.$refs.btnRef.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
     }
   },
