@@ -26,7 +26,9 @@ export default {
     avatar () {
       return this.singer.avatar
     },
+    // 取 vuex 中存好的数据
     ...mapGetters([
+      // 将 singer 映射为 getters 里面的singer数据,直接可以this.singer调用
       'singer'
     ])
   },

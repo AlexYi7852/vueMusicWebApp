@@ -1,4 +1,4 @@
-
+<!-- 父组件是singerDetail -->
 <template>
   <div class="music-list">
     <!-- 返回按钮 -->

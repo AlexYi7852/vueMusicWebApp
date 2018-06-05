@@ -6,7 +6,7 @@ import Ranking from 'components/ranking' // 排行榜
 import Search from 'components/search' // 搜索页面
 import Singer from 'components/singer' // 歌手页面
 import UserCenter from 'components/userCenter' // 个人中心
-import SingerDetail from 'components/singerDetail'
+import SingerDetail from 'components/singerDetail' // 歌手详情页面
 
 Vue.use(Router)
 
@@ -21,7 +21,7 @@ export default new Router({
       component: Singer,
       children: [
         {
-          path: ':id',
+          path: ':id', // 表示 id 为变量
           component: SingerDetail
         }
       ]

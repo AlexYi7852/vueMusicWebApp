@@ -46,9 +46,10 @@ export default {
         probeType: this.probeType,
         click: this.click
       })
-      // 监听scroll组件滚动，并向父组件传递scroll组件坐标
+      // 监听滚动事件，并派发事件以供父组件监听，将 pos 值传出去
       if (this.listenScroll) {
         let _self = this
+        // 实时监测滚动事件，派发事件：Y轴距离
         this.scroll.on('scroll', (pos) => {
           _self.$emit('scroll', pos)
         })

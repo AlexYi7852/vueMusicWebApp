@@ -1,4 +1,4 @@
-
+<!-- 父组件是musicList -->
 <template>
   <div class="song-list">
     <ul>
@@ -27,6 +27,7 @@ export default {
     getDesc (song) {
       return `${song.singer} - ${song.album}`  
     },
+    // 监听点击事件，将具体点击的歌曲和索引派发出去，以供父组件 musicList 监听
     selectItem (item, index) {
       this.$emit('select', item, index)
     }

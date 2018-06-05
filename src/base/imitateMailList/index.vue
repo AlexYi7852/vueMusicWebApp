@@ -1,4 +1,4 @@
-
+<!-- 父组件是singer -->
 <template>
   <scroll ref="scroll" class="singer-wrapper" :probeType="probeType"
          :data="data" :listenScroll="listenScroll" @scroll="scroll">
@@ -86,20 +86,25 @@ export default {
       return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
+  // watch 的回调函数的第一个参数表示变化的新值
   watch: {
     // 监听data变化，计算每个listGroup子元素距顶部的距离
     data () {
+       // 延时，确保DOM渲染之后执行，
+      //  通常是nextTick，这里用setTimeout是为了兼容更低
       setTimeout(() => {
         this._calculateHeight()
       }, 20)
     },
+    // 这里的 scrollY 是当前组件上的，和 BScroll 的并不是一个
     // 监听 scrollY 落在listGroup哪个子元素区间，实现高亮联动
     scrollY (newY) {
       const listHeight = this.listHeight
-      // 当滚动到顶部
+      // 1. 当滚动至顶部以上
       if (newY > 0) { this.currentIndex = 0; return }
 
-      // 滚动到中间部分
+      // 2. 当在中间部分滚动，
+      // length之所以 -1 是因为 当初高度列表定义必须多一个
       for (let i = 0; i < listHeight.length - 1; i++) {
         // 第一个子元素距顶部的距离，依次累加
         let height1 = listHeight[i]
@@ -108,18 +113,18 @@ export default {
         // 就知道currentIndex在哪个子元素区间
         if (-newY >= height1 && -newY < height2) {
           this.currentIndex = i
-          // 计算下一个子元素距离上一个子元素title的距离
-          this.diff = height2 + newY
+          // 在中间部分滚动时，会不断设置 diff 值，
+          // 每个区块的高度上限（也就是底部）减去 Y轴偏移的值
+          this.diff = height2 + newY // height 上限 - newY 的值
           return
         }
       }
-      // 当滚动到底部， 并且-newY > 最后一个元素的上限
+      // 3. 当滚动至底部，且 newY 大于最后一个元素的上限
       this.currentIndex = listHeight - 2
     },
-    // 监听listGroup下一个子元素距离上一个子元素title的距离
-    // 从而获得fixedTitle什么时候该 往上/往下 偏移, 并获取的它的偏移量
+    // watch 检测 diff 变化，判断如果 diff>0 且 小于 title 块的高度，
+    // 设为差值，否则为0, 再将 fixed 的 title 块 translate 偏移
     diff (newVal) {
-      // 如果diff大于0并且小于title的高度就获取它的偏移量并让title偏移，否则就什么都不做
       let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
       // 当偏移量等于title的高度时, 什么也不做 
       if(this.fixedTop === fixedTop) { return }
@@ -129,32 +134,33 @@ export default {
     }
   },
   methods: {
-    // 点击派发歌手数据
+    // 监听点击事件，将具体点击的歌手派发出去，
+    // 以供父组件 singer 监听
     selectItem (item) {
       this.$emit('select', item)
     },
     // 点击右侧，左侧联动
     onShortcutTouchStart (event) {
-      // 获取第一次手指触摸的元素
+      // 第一次触碰的位置
       let firstTouch = event.touches[0]
-      // 获取第一次手指触摸的元素Y值
+      // 保存 第一次触碰的位置的Y值
       this.touch.y1 = firstTouch.pageY
-      // 获取第一次手指触摸的元素索引
+      // 获取 点击具体锚点的 index 值
       let firstIndex = MyDom.getElementIndex(event.target, 'index')
-      // 把第一次手指触摸的元素索引保存起来
+      // 保存 第一次触碰时的锚点 index 值
       this.touch.firstIndex = firstIndex
       // 点击右侧，左侧联动到相应的位置
       this._scrollTo(firstIndex)
     },
     // 滑动右侧，左侧滚动到相应位置
     onShortcutTouchMove (event) {
-      // 获取最后一次手指触摸的元素
+      // 获取最后一次手指触碰的位置
       let lastTouch = event.touches[0]
-      // 获取最后一次手指触摸的元素Y值
+      // 获取最后一次手指触碰的位置的Y值
       this.touch.y2 = lastTouch.pageY
-      // 两次 touch y轴偏移量
+      // 两次触碰 Y 轴的偏移锚点值
       let delta = Math.floor((this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT)
-      // 移动到的元素索引
+      // 获取 偏移了多少 index 值  ，因为 firstIndex 是字符串，所以要转成数字再相加
       let targetIndex = parseInt(this.touch.firstIndex) + delta
       this._scrollTo(targetIndex)
     },

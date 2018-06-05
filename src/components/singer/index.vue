@@ -29,9 +29,9 @@ export default {
   },
   methods: {
     selectSinger (singer) {
+      // 指向子路由，向地址栏加上 singer.id
       this.$router.push({ path: `/singer/${singer.id}` })
-      // 提交数据到state.singer
-      // 提交数据到store.state.singer
+      // 向 mutation 提 SET_SINGER 的 commit
       this.setSinger(singer)
     },
     _getSingerList () {
@@ -91,8 +91,9 @@ export default {
       })
       return hot.concat(rest)
     },
-    // 提交到vuex.store.singer
+    // 语法糖，'...'将多个对象注入当前对象
     ...mapMutations({
+      // 将 this.setSinger() 映射为 this.$store.commit('SET_SINGER')
       setSinger: 'SET_SINGER'
     })
   }

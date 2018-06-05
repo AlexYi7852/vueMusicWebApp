@@ -1,4 +1,4 @@
-
+<!-- 父组件是recommend -->
 <template>
   <div class="slider" ref="slider">
     <div class="slider-group" ref="sliderGroup">
