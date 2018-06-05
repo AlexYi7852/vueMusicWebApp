@@ -89,7 +89,7 @@
     </transition>
     <!-- 播放成功的时候会派发canplay事件和timeUpdate事件, 播放失败会派发error事件 -->
     <audio ref="audio" :src="currentSong.url" @timeupdate="updateTime"
-                                 @canplay="ready" @error="error"></audio>
+                   @ended="end" @canplay="ready" @error="error"></audio>
   </div>
   <!-- 解决快速切换歌曲引发的错误 -->
   <!-- 这个错误是由于切换的太快，歌曲并未获取到播放地址，而提前播放 -->
@@ -183,6 +183,18 @@ export default {
     // 播放/暂停
     togglePlay () {
       this.setPlayingState(!this.playing)
+    },
+    // 当前歌曲播放结束
+    end () {
+      // 单曲循环
+      if (this.mode = playMode.loop) {
+        this.loop()
+        // 否则播放下一首
+      } else { this.next() }      
+    },
+    // 单曲循环
+    loop () {
+      this.$refs.audio.currentTime = 0
     },
     // 下一首
     next () {
