@@ -2,10 +2,23 @@ import * as types from './mutations-types'
 import { playMode } from 'common/js/config'
 import { shuffle } from 'common/js/utils'
 
+function findIndex (list, song) {
+  return list.findIndex((item) => {
+    return item.id === song.id
+  })
+}
+
 // 选择歌曲播放
 export const selectPlay = function ({commit, state}, {list, index}) {
   commit(types.SET_SEQUENCE_LIST, list) // 设置为顺序播放列表
-  commit(types.SET_PLAYLIST, list) // 设置播放歌曲列表
+  // 当播放模式为随机播放的时候，需要改变index
+  if (state.mode === playMode.random) {
+    let randomList = shuffle(list)
+    commit(types.SET_PLAYLIST, randomList)
+    index = findIndex(randomList, list[index])
+  } else {
+    commit(types.SET_PLAYLIST, list) // 设置播放歌曲列表
+  }
   commit(types.SET_CURRENT_INDEX, index) // 设置当前播放歌曲索引
   commit(types.SET_FULL_SCREEN, true) // 设置播放器展开状态
   commit(types.SET_PLATING_STATE, true) // 设置播放器播放状态
