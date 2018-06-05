@@ -82,7 +82,7 @@ export default {
     }
   },
   methods: {
-    // 设置store播放器的展开状态，传入播放列表， 播放歌曲index 
+    // 设置播放器的展开状态，传入播放列表，歌曲索引
     selectItem (item, index) {
       this.selectPlay({
         list: this.songs,

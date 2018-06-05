@@ -1,4 +1,6 @@
-
+<!-- mini 的圆形进度条, 父组件是player
+利用了 SVG 实现，其中有两个圆，
+一个是背景圆形，另一个为已播放的圆形进度 -->
 <template>
   <div class="progress-circle">
     <svg :width="radius" :height="radius" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">

@@ -1,3 +1,5 @@
+<!-- 把播放器组件放在 App.vue 下，因为它是一个跟任何路由都不相关的东西。
+在任何路由下，它都可以去播放。切换路由并不会影响播放器的播放。 -->
 <template>
   <div class="player-wrap" v-show="playList.length > 0">
     <!-- 正常的播放器 -->
@@ -89,6 +91,12 @@
     <audio ref="audio" :src="currentSong.url" @timeupdate="updateTime"
                                  @canplay="ready" @error="error"></audio>
   </div>
+  <!-- 解决快速切换歌曲引发的错误 -->
+  <!-- 这个错误是由于切换的太快，歌曲并未获取到播放地址，而提前播放 -->
+  <!-- 利用了H5新api： canplay
+       当终端可以播放媒体文件时触发该canplay事件，估计加载足够的数据来
+       播放媒体直到其结束，而不必停止以进一步缓冲内容。
+       利用这个api，在audio上监听 canplay 派发的事件，做成标志位 -->
 </template>
 
 <script>

@@ -1,4 +1,4 @@
-
+<!-- 父组件是player -->
 <template>
   <div class="progress-bar" ref="barRef" @click="progressBarClick">
     <div class="bar-inner">
@@ -34,7 +34,7 @@ export default {
     this.touch = {}
   },
   methods: {
-    // 点击某个空的地方进度条偏移到某个位置  
+    // 点击任意位置，移动进度按钮，是通过为 progress 进度条添加点击事件
     progressBarClick (e) {
       this._move(e.offsetX)
       this._trigerPercent()

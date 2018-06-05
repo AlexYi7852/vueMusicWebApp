@@ -23,8 +23,10 @@ export const MyDom = {
     }
   }
 }
-
+// 自动判断浏览器加CSS兼容前缀 prefixStyle
+// 首先生成基于用户浏览器的div样式
 let elementStyle = document.createElement('div').style
+// 根据 vendor 供应商定义的不同浏览器前缀，去测试用户浏览器。
 let vendor = (() => {
   let transformNames = {
     webkit: 'webkitTransform',
@@ -40,7 +42,12 @@ let vendor = (() => {
   }
   return false
 })()
-
+// 方法就是判断创建的 div 样式是否有相应的前缀样式，
+// 如果有，则返回前缀样式的key，也就是需要的 前缀
+// 通过 prefixStyle 函数，参数为我们需要兼容的样式。
+// 如果需要加签注，返回的格式是 前缀 + 首字母大写的样式
+// （应为通常前缀样式为 -webkit-transform-origin，JS操作时，
+// 不能写 -，可以采用驼峰写法，也就是样式首字母大写）
 export function prefixStyle (style) {
   if (vendor === false) {
     return false
