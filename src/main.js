@@ -9,6 +9,9 @@ import VueLazyLoad from 'vue-lazyload'
 
 import 'common/scss'
 
+// 移动端自适应rem
+// import './utils/setFontSize.js'
+
 fastclick.attach(document.body)
 Vue.use(VueLazyLoad, {
   loading: require('common/img/default.png')

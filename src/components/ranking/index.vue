@@ -13,6 +13,7 @@
   width: 100%;
   top: 88px;
   bottom: 0;
+  font-size: .16rem;
   .toplist {
     height: 100%;
     overflow: hidden;
