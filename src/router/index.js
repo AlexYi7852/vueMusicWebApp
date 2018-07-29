@@ -11,14 +11,23 @@ import SingerDetail from 'components/singerDetail' // 歌手详情页面
 Vue.use(Router)
 
 export default new Router({
+  // scrollBehavior (to, from, savedPosition) {
+  //   console.log(savedPosition, 'saveposition')
+  //   if (savedPosition) {
+  //     return savedPosition
+  //   } else {
+  //     return { x: 0, y: 0 }
+  //   }
+  // },
   routes: [
     { path: '/', redirect: '/recommend' },
-    { path: '/recommend', component: Recommend },
+    { path: '/recommend', component: Recommend, meta: { keepAlive: true } },
     { path: '/ranking', component: Ranking },
     { path: '/search', component: Search },
     {
       path: '/singer',
       component: Singer,
+      meta: { keepAlive: false },
       children: [
         {
           path: ':id', // 表示 id 为变量

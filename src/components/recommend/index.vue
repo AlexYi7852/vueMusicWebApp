@@ -53,6 +53,7 @@ export default {
     }
   },
   created () {
+    console.log('recommend')
     this._getSliderList()
     this._getDiscList()
   },
