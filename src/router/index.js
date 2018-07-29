@@ -11,14 +11,14 @@ import SingerDetail from 'components/singerDetail' // 歌手详情页面
 Vue.use(Router)
 
 export default new Router({
-  // scrollBehavior (to, from, savedPosition) {
-  //   console.log(savedPosition, 'saveposition')
-  //   if (savedPosition) {
-  //     return savedPosition
-  //   } else {
-  //     return { x: 0, y: 0 }
-  //   }
-  // },
+  scrollBehavior (to, from, savedPosition) {
+    console.log(to, 'to', from, 'from', savedPosition)
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  },
   routes: [
     { path: '/', redirect: '/recommend' },
     { path: '/recommend', component: Recommend, meta: { keepAlive: true } },
