@@ -13,6 +13,22 @@ const validate = {
        var re = /^(0\d{2,3}-)?\d{7,8}(-\d{1,6}|\d{0})?$/;
        return re.test(str);
     },
+
+    ischainendenglish(str){
+        var re = /^[a-zA-Z\u4e00-\u9fa5]+$/;
+        return re.test(str);
+    },
+    // 校验是否是中文英文字母
+    isEnChianName(str){
+      let re = /^[A-Za-z\u4E00-\u9FA5]+$/;
+      return re.test(str);
+    },
+    // 校验是否是银行卡号
+    isBank(str){
+      let re = /^([1-9]{1})(\d{11,18})$/;
+      return re.test(str);
+    },
+
     isMobile: function (str) {
       var re = /^1[3-9]\d{9}$/;
 
