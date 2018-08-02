@@ -1,6 +1,7 @@
 import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
+import mixin from './mixin'
 import store from './store'
 import router from './router'
 // 解决移动端延迟300毫秒事件
@@ -9,6 +10,7 @@ import VueLazyLoad from 'vue-lazyload'
 
 import 'common/scss'
 
+Vue.mixin(mixin)
 // 移动端自适应rem
 // import './utils/setFontSize.js'
 
