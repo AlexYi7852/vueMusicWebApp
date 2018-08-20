@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   scrollBehavior(to, from, savedPosition) {
     // console.log(to, 'to', from, 'from', savedPosition)
     if (savedPosition) {
@@ -51,3 +51,30 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (!window.FIRST_PATH) {
+    // 用于浏览器后退历史判断
+    window.FIRST_PATH = to.path;
+  }
+  next()
+})
+
+router.afterEach((to, from) => {
+  // 路由变化更新navbar的title
+  if (to.meta) {
+    let title = to.meta.title || '小牛普惠';
+    if (IS_APP_ENV) {
+      let navBar = new NavBar({
+        title: title,
+        buttons: to.meta.buttons || [],
+        isHideNavBar: !!to.meta.isHideNavBar ? 1 : 0
+      });
+      navBar.show()
+    } else {
+      document.querySelector('title').innerText = title;
+    }
+  }
+})
+
+export default router
